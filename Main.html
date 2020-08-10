@@ -1,0 +1,416 @@
+<html>
+<head>
+  <meta name="description" content="EFHTEST">
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>EFHTEST</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #header {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      margin: 0;
+      height: 40px;
+      width: 100%;
+      background-color: #00467F;
+      text-align: center;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.15/"></script>
+</head>
+
+<script>
+  require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic",
+      "esri/widgets/Search",
+      "esri/tasks/Locator",
+      "esri/widgets/BasemapToggle",
+      "esri/widgets/Popup"
+    ],
+    function(
+      Map, MapView, FeatureLayer, GraphicsLayer, Graphic, Search, Locator, BasemapToggle, Popup
+    ) {
+      
+      
+      var map = new Map({
+        basemap: "topo-vector"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-94.82100,29.55100],
+        zoom: 8,
+        popup: {
+            dockEnabled: true,
+            dockOptions: {
+              // Disables the dock button from the popup
+              buttonEnabled: false,
+              // Ignore the default sizes that trigger responsive docking
+              breakpoint: false
+            }
+          },
+      });
+    
+      var basemapToggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "hybrid"
+      });
+      view.ui.add(basemapToggle, "bottom-right");
+    
+      var searchWidget = new Search ({ 
+        view: view,
+        includeDefaultSources: false,
+        popupEnabled: false,
+        resultGraphicEnabled: false,
+        sources: [{
+              locator: new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer" }),
+              placeholder: "Enter Lat/Long",
+              singleLineFieldName: "SingleLine",
+              outFields: ["Address"],
+              name: "ArcGIS World Geocoding Service",
+              suggestionsEnabled: false,
+              
+            }],
+        locationEnabled: true
+      });
+      view.ui.add(searchWidget, "top-right");
+    
+      var downloadReportAction = {
+          title: "Download Report",
+          id: "downloadReport",
+          image: "https://developers.arcgis.com/javascript/latest/sample-code/popup-actions/live/Measure_Distance16.png"
+      };
+
+      var infoWindow = new Popup ({
+        view: view,
+        actions: [downloadReportAction]
+      });
+      view.ui.add(infoWindow);
+    
+     // Reference the feature layer to query
+ 
+      var depthLayer = new FeatureLayer({
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/tx_depth_poly/FeatureServer"
+      });
+      var habitatLayer = new FeatureLayer ({
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_TXcoast_WGS/FeatureServer"
+      });
+      var parameterTable = new FeatureLayer ({
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/querytable/FeatureServer"
+      }); 
+      var testTable = new FeatureLayer ({
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/features/FeatureServer"
+      });
+    
+      var habitat;
+      var depth;
+      var reportText;
+    
+        map.add(habitatLayer);
+    
+     function queryTable(){
+        var name = [];
+        var lifestage = [];
+        var windowText = [];
+        var salMin = [];
+        var salMax = [];
+        reportText = ["Species,common_name,Life_stage,salinity_low,salinity_high,depth_low,depth_high,TX,LA,MS,AL,FL,GA,SC,NC"
+];
+       
+       if(depth > 0 && depth <= 1){
+         depth = 0;//considering tide
+       }
+       depth = depth*(-1);
+        
+       switch(habitat){
+         case 13: //Palustrine Forested Wetland
+           console.log("Case 13");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 14: //Palustrine Scrub/Scrub Wetland
+           console.log("Case 14");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 15: //Palustrine Emergent Wetland
+           console.log("Case 15");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 16: //Estuarine Forested Wetland
+           console.log("Case 16");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 17: //Estuarine Scrub/Scrub Wetland
+           console.log("Case 17");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 18: //Estuarine Emergent Wetland
+           console.log("Case 18");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 19: //Unconsolidated Shore
+           console.log("Case 19");
+           habitat = 0;
+           break;
+         case 21: //Open Water
+           console.log("Case 21");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 22: //Palustrine Aquatic Bed
+           console.log("Case 22");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         case 23: //Estuarine Aquatic Bed
+           console.log("Case 23");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
+           habitat = 0;
+           break;
+         default:
+           console.log("Default")
+           var tableQuery = {
+            outFields: ["*"],
+            where: "'common name' = 'Nothing'"
+          }
+       }
+          parameterTable.queryFeatures(tableQuery).then(function(result) {
+                  result.features.forEach(function(feature){
+                    if(feature.attributes.common_name != name[name.length-1]){
+                      name.push(feature.attributes.common_name);
+                      windowText.push("<b>"+feature.attributes.common_name+"</b><li>"+feature.attributes.Life_stage+"</li>");
+                    }
+                    else{
+                      windowText.push("<li>"+feature.attributes.Life_stage+"</li>");
+                    }
+                    reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.Life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.TX+","+feature.attributes.LA+","+feature.attributes.MS+","+feature.attributes.AL+","+feature.attributes.FL+","+feature.attributes.GA+","+feature.attributes.SC+","+feature.attributes.NC);
+                  });
+              
+                 if(name[0] != null) {
+                      infoWindow.title = "EFH Species Found:";
+                      infoWindow.content = windowText.join(""); 
+                      infoWindow.visible = true;
+                 }
+            
+           });
+        return true;
+      }
+    
+    function queryFeatureLayerView(point, distance, spatialRelationship, sqlExpression){
+        infoWindow.title = "No EFH Species Found in this Area";
+        infoWindow.content = ""; 
+       
+        console.log(point);
+        if (!map.findLayerById(depthLayer.id)) {
+          depthLayer.outFields = ["*"];
+        }
+        if (!map.findLayerById(habitatLayer.id)) {
+          habitatLayer.outFields = ["*"];
+        }
+        var query = {
+          geometry: point,
+          distance: distance,
+          spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: false,
+          where: sqlExpression
+        }; 
+      console.log(query.where);
+        habitatLayer.queryFeatures(query).then(function(result) {
+                    result.features.forEach(function(feature){
+                      habitat = feature.attributes.gridcode;
+                      console.log("Habitat" + feature.attributes.gridcode);
+                    }); 
+                    depthLayer.queryFeatures(query).then(function(result) {
+                      result.features.forEach(function(feature){
+                        depth = feature.attributes.gridcode_f;
+                        console.log("Depth" + feature.attributes.gridcode_f);
+                      });
+                      queryTable();
+                      console.log(habitatLayer.fields[0].name);
+                    });
+                   
+        });
+      
+      return true;
+      }
+      
+     function downloadReport() {
+        var reportFile = document.createElement('a');
+        reportFile.setAttribute('href', 'data:text/plain;charset=utf-8,' +  encodeURIComponent(reportText.join("\n")));
+        reportFile.setAttribute('download', "test.csv");
+
+        reportFile.style.display = 'none';
+        reportFile.click();
+        //document.body.appendChild(reportFile);
+
+        //document.body.removeChild(reportFile);
+      }
+    
+    
+      view.when(function(){
+        //queryFeatureLayerView(view.center, 0, "within")
+      });
+
+      view.on("click", function(event){
+        
+        infoWindow.location = event.mapPoint;
+        if(queryFeatureLayerView(event.mapPoint, 0, "within")){
+           infoWindow.visible = true;
+        }
+        else{
+           infoWindow.visible = false;
+        }
+        
+      });
+    
+      searchWidget.on("search-start", function(){
+        infoWindow.visible = false;
+          searchWidget.goToOverride = function(view, goToParams) {
+              goToParams.target.zoom = 8;
+              goToParams.options.durations = 0;
+              console.log(goToParams)
+              queryFeatureLayerView(goToParams.target.target.center, 0, "within");
+              queryTable();
+              infoWindow.location = goToParams.target.target.center;
+              return view.goTo(goToParams.target, goToParams.options);     
+          };
+          console.log(searchWidget.searchTerm);
+          console.log(view.viewpoint.targetGeometry);
+          queryTable();
+          infoWindow.visible = true;
+      });
+    
+      infoWindow.on("trigger-action", function (event) {
+          // Execute the measureThis() function if the measure-this action is clicked
+          if (event.action.id === "downloadReport") {
+            console.log("Hello");
+            downloadReport();
+          }
+      });
+      
+      var graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+      
+      
+      /*function addGraphics(result) {
+        graphicsLayer.removeAll();
+        result.features.forEach(function(feature){
+          var g = new Graphic({
+            geometry: feature.geometry,
+            attributes: feature.attributes,
+            popupTemplate: {
+             title: "{grid_name}",
+             content: "hi"
+            }
+          });
+          graphicsLayer.add(g);
+          
+        });
+        }*/
+    
+  
+     
+      // Server-side query
+    
+     /* function queryFeatureLayer(point, distance, spatialRelationship, sqlExpression) {
+        var query = {
+          geometry: point,
+          distance: distance,
+          spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          where: sqlExpression
+        };
+        featureLayer.queryFeatures(query).then(function(result) {
+          addGraphics(result);
+        });
+      }  */
+        
+      // Client-side query
+      
+        
+        
+        
+        
+          
+        
+        // Could be used later to query the EFH basic layer
+        /*view.whenLayerView(habitatLayer).then(function(featureLayerView) {
+          if (featureLayerView.updating) {
+            var handle = featureLayerView.watch("updating", function(isUpdating){
+              if (!isUpdating) {
+                featureLayerView.queryFeatures(query).then(function(result) {
+                  addGraphics(result) 
+                });
+                handle.remove();
+              }
+            });            
+          } else {
+            featureLayerView.queryFeatures(query).then(function(result) {
+              addGraphics(result);
+            });
+          }
+        });*/ 
+
+    });
+    
+  </script>
+</head>
+<body>
+  <div id="header">
+    <t style="color:white; font-family:'verdana'; font-size: 190%;" > 
+       Inland Test Mapper 
+    </t>   
+  </div>
+   
+  <div id="viewDiv"></div>
+ 
+</body>
+
+</html>
