@@ -93,9 +93,9 @@
     
       //Addition of the button found on the query results window that pops up, used for downloading a CSV file
       var downloadReportAction = {
-          title: "Download Report",
+          title: "Download CSV",
           id: "downloadReport",
-          image: "https://developers.arcgis.com/javascript/latest/sample-code/popup-actions/live/Measure_Distance16.png"
+          image: "https://umiami.maps.arcgis.com/sharing/rest/content/items/f2676983a0ed4e769e2e09ab7bf0b8eb/data"
       };
 
       //Query results window added with no information
@@ -239,6 +239,7 @@
                  if(name[0] != null) {
                       infoWindow.title = "EFH Species Found:";
                       infoWindow.content = windowText.join(""); 
+                      infoWindow.actions = [downloadReportAction];
                       infoWindow.visible = true;
                  }
             
@@ -247,8 +248,9 @@
       }
     
     function queryFeatureLayerView(point, distance, spatialRelationship, sqlExpression){
-        infoWindow.title = "No EFH Species Found in this Area";
-        infoWindow.content = ""; 
+        infoWindow.title = "No EFH Species found in this area";
+        infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>An EFH designation may still be nearby this specific area. If unsure, check other points near the area.</li>"; 
+        infoWindow.actions = [];
        
         console.log(point);
         if (!map.findLayerById(depthLayer.id)) {
