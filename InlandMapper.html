@@ -228,6 +228,10 @@
            break;
          case 19: //Unconsolidated Shore
            console.log("Case 19");
+           var tableQuery = {
+            outFields: ["*"],
+            where: "(depth_low <= "+depth+" AND depth_high >= " +depth+")"
+           }
            habitat = 0;
            break;
          case 21: //Open Water
@@ -285,7 +289,7 @@
         return true;
       }
     
-    function queryFeatureLayerView(point, distance, spatialRelationship, sqlExpression){
+    function queryFeatureLayerView(point, spatialRelationship, sqlExpression){
         infoWindow.title = "No EFH Species found in this area";
         infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>An EFH designation may still be nearby this specific area. If unsure, check other points near the area.</li>"; 
         infoWindow.actions = [];
@@ -297,20 +301,35 @@
         if (!map.findLayerById(habitatLayer.id)) {
           habitatLayer.outFields = ["*"];
         }
-        var query = {
+        var habitatQuery = {
           geometry: point,
-          distance: distance,
+          distance: 30,
+          units: "meters",
           spatialRelationship: spatialRelationship,
           outFields: ["*"],
           returnGeometry: false,
           where: sqlExpression
         }; 
-        habitatLayer.queryFeatures(query).then(function(result) {
+        var depthQuery = {
+          geometry: point,
+          distance: 0,
+          spatialRelationship: "within",
+          outFields: ["*"],
+          returnGeometry: false,
+          where: sqlExpression
+        }; 
+        habitatLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
-                      habitat = feature.attributes.gridcode;
-                      console.log("Habitat" + feature.attributes.gridcode);
+                      if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
+                          habitat = feature.attributes.gridcode;
+                          console.log("Habitat" + feature.attributes.gridcode);
+                      }
+                      else{
+                          habitat = feature.attributes.gridcode;
+                          console.log("Habitat" + feature.attributes.gridcode);
+                      }
                     }); 
-                    depthLayer.queryFeatures(query).then(function(result) {
+                    depthLayer.queryFeatures(depthQuery).then(function(result) {
                       result.features.forEach(function(feature){
                         depth = feature.attributes.gridcode_f;
                         console.log("Depth" + feature.attributes.gridcode_f);
@@ -336,7 +355,7 @@
       view.on("click", function(event){
         
         infoWindow.location = event.mapPoint;
-        if(queryFeatureLayerView(event.mapPoint, 0, "within")){
+        if(queryFeatureLayerView(event.mapPoint, "intersects")){
            infoWindow.visible = true;
            searchWidget.searchTerm = event.mapPoint.latitude.toFixed(4) + ", " + event.mapPoint.longitude.toFixed(4);
         }
@@ -352,7 +371,7 @@
               goToParams.target.zoom = 8;
               goToParams.options.durations = 0;
               console.log(goToParams)
-              queryFeatureLayerView(goToParams.target.target.center, 0, "within");
+              queryFeatureLayerView(goToParams.target.target.center, "intersects");
               queryTable();
               infoWindow.location = goToParams.target.target.center;
               return view.goTo(goToParams.target, goToParams.options);     
