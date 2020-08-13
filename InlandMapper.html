@@ -16,12 +16,50 @@
     #header {
       padding-top: 5px;
       padding-bottom: 5px;
-      margin: 0;
+      margin: auto;
       height: 40px;
       width: 100%;
       background-color: #00467F;
       text-align: center;
     }
+   .dropbtn {
+     background-color: #00467F;
+     color: white;
+     padding: 9px;
+     font-size: 16px;
+     font-family:'verdana';
+     border: none;
+     cursor: pointer;
+  }
+
+  .dropbtn:hover, .dropbtn:focus {
+     background-color: #00067F;
+  }
+
+  .dropdown {
+     float: right;
+     position: relative;
+     display: inline-block;
+  }
+
+  .about-content {
+     display: none;
+     position: absolute;
+     right: 0;
+     background-color: #f1f1f1;
+     border-style: solid;
+     border-width: 1px;
+     border-color: black;
+     min-width: 350px;
+     overflow: auto;
+     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+     z-index: 1;
+     font-family:'verdana';
+     font-size: 13px;
+     padding: 5px;
+
+  }
+  .show {display: block;}
   </style>
   <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.15/"></script>
@@ -300,6 +338,7 @@
         infoWindow.location = event.mapPoint;
         if(queryFeatureLayerView(event.mapPoint, 0, "within")){
            infoWindow.visible = true;
+           searchWidget.searchTerm = event.mapPoint.latitude.toFixed(4) + ", " + event.mapPoint.longitude.toFixed(4);
         }
         else{
            infoWindow.visible = false;
@@ -339,9 +378,41 @@
   <div id="header">
     <t style="color:white; font-family:'verdana'; font-size: 190%;" > 
        Inland Test Mapper 
-    </t>   
+    </t>
+    <div class="dropdown">
+      <button onclick="dropDownFunction()" class="dropbtn">About</button>
+      <div id="aboutMenu" class="about-content">
+        <p align = "center" >The Inland EFH Mapper informs users of potential essential fishery habitats (EFHs), displaying the species and their lifestages at a provided coordinate.</p>
+        <p align = "center" >The mapping tool responds to two styles of input:
+        <li align = "center" >By clicking/touching your specific area of interest.</li>
+        <li align = "center" >Entering in a "latitude, longitude" or current location in the search.</li>
+         You will see a window pop up on the map explaining whether an EFH was found, followed by species common name and their life stages.
+        </p>
+        <p align = "center" >A CSV is available to download for your point of interest by clicking the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the resulting species, scientific names, life stages, minimum and maximum depth and salinity, and states where they are commonly found.</p>
+        <p align = "center" >For more information on offshore EFH designations, or visible EFH boundaries, please visit the NOAA EFH Mapper tool (Link here).</p>
+      </div>
+    </div>
+    <script>
+    //Toggles showing the content of the instructional menu
+    function dropDownFunction() {
+      document.getElementById("aboutMenu").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+    </script>
   </div>
-   
   <div id="viewDiv"></div>
  
 </body>
