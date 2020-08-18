@@ -75,11 +75,12 @@
       "esri/widgets/Search",
       "esri/tasks/Locator",
       "esri/widgets/BasemapToggle",
-      "esri/widgets/Popup"
+      "esri/widgets/Popup",
+      "esri/views/draw/PolygonDrawAction",
+      "esri/views/draw/Draw"
     ],
     function(
-      Map, MapView, FeatureLayer, GraphicsLayer, Graphic, Search, Locator, BasemapToggle, Popup
-    ) {
+      Map, MapView, FeatureLayer, GraphicsLayer, Graphic, Search, Locator, BasemapToggle, Popup, PolygonDrawAction, Draw) {
       
       //base map set to topography
       var map = new Map({
@@ -101,6 +102,9 @@
               breakpoint: false
             }
           },
+      });
+      const draw = new Draw({
+          view: view
       });
     
       //Addition of widget toggling the basemap from topography to satellite view
@@ -143,6 +147,8 @@
       });
       view.ui.add(infoWindow);
     
+      view.ui.add("line-button", "top-left");
+    
      //Load in the feature layers used for querying depth/habitat/species parameter
  
       var depthLayer = new FeatureLayer({
@@ -159,10 +165,12 @@
       });
     
       var habitat; //A variable that holds the habitat grid code for querying
-      var depth; //Holds the depth grid code for querying
+      var minDepth; //Holds the minimum depth grid code for querying
+      var maxDepth; //Holds the maximum depth grid code for querying
       var reportText; //The information that returned in the downloaded report
+      var queryPolygon = false;
     
-     function queryTable(){
+    function queryTable(){
         var name = []; //Array holding species common names
         var lifestage = []; //Array holding species lifestages
         var windowText = []; //Text to display on the pop up info window
@@ -171,18 +179,20 @@
         reportText = ["Species,common_name,Life_stage,salinity_low,salinity_high,depth_low,depth_high,TX,LA,MS,AL,FL,GA,SC,NC"
 ];//Populate the report text with column headers
        
-       if(depth > 0 && depth <= 1){
-         depth = 0;//This considers the MHHW of texas
+       if(minDepth > 0 && minDepth <= 1){
+         minDepth = 0;//This considers the MHHW of texas
        }
-       depth = depth*(-1); //The gridcode for depth considers below sea level as negative, but the species parameter table considers it as positive
-        
+       minDepth = minDepth*(-1); //The gridcode for depth considers below sea level as negative, but the species parameter table considers it as positive
+       maxDepth = maxDepth*(-1)
+       console.log(minDepth);
+       console.log(maxDepth);
        //Switch case for the queried habitat grid codes, depending on the habitat, the queried salinity high and low changes
        switch(habitat){
          case 13: //Palustrine Forested Wetland
            console.log("Case 13");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -190,7 +200,7 @@
            console.log("Case 14");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -198,7 +208,7 @@
            console.log("Case 15");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -206,7 +216,7 @@
            console.log("Case 16");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -214,7 +224,7 @@
            console.log("Case 17");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -222,7 +232,7 @@
            console.log("Case 18");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -230,7 +240,7 @@
            console.log("Case 19");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -238,7 +248,7 @@
            console.log("Case 21");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -246,7 +256,7 @@
            console.log("Case 22");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -254,7 +264,7 @@
            console.log("Case 23");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+depth+" AND depth_high >= " +depth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
            }
            habitat = 0;
            break;
@@ -284,17 +294,19 @@
                       infoWindow.actions = [downloadReportAction];
                       infoWindow.visible = true;
                  }
-            
+            queryPolygon = false;
+            minDepth = null;
+            maxDepth = null;
            });
         return true;
       }
     
-    function queryFeatureLayerView(point, spatialRelationship, sqlExpression){
+    function queryFeatureLayerView(shape, spatialRelationship, sqlExpression){
         infoWindow.title = "No EFH Species found in this area";
         infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>An EFH designation may still be nearby this specific area. If unsure, check other points near the area.</li>"; 
         infoWindow.actions = [];
        
-        console.log(point);
+        console.log(shape);
         if (!map.findLayerById(depthLayer.id)) {
           depthLayer.outFields = ["*"];
         }
@@ -302,7 +314,7 @@
           habitatLayer.outFields = ["*"];
         }
         var habitatQuery = {
-          geometry: point,
+          geometry: shape,
           distance: 30,
           units: "meters",
           spatialRelationship: spatialRelationship,
@@ -311,9 +323,9 @@
           where: sqlExpression
         }; 
         var depthQuery = {
-          geometry: point,
+          geometry: shape,
           distance: 0,
-          spatialRelationship: "within",
+          spatialRelationship: spatialRelationship,
           outFields: ["*"],
           returnGeometry: false,
           where: sqlExpression
@@ -322,26 +334,86 @@
                     result.features.forEach(function(feature){
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                           habitat = feature.attributes.gridcode;
-                          console.log("Habitat" + feature.attributes.gridcode);
+                          //console.log("Habitat" + feature.attributes.gridcode);
                       }
                       else{
                           habitat = feature.attributes.gridcode;
-                          console.log("Habitat" + feature.attributes.gridcode);
+                          //console.log("Habitat" + feature.attributes.gridcode);
                       }
                     }); 
                     depthLayer.queryFeatures(depthQuery).then(function(result) {
                       result.features.forEach(function(feature){
-                        depth = feature.attributes.gridcode_f;
-                        console.log("Depth" + feature.attributes.gridcode_f);
+                        if(minDepth == null || minDepth < feature.attributes.gridcode_f){
+                          minDepth = feature.attributes.gridcode_f;
+                        }
+                        if(maxDepth == null || maxDepth > feature.attributes.gridcode_f){
+                          maxDepth = feature.attributes.gridcode_f;
+                        }
+                        
                       });
                       queryTable();
-                      console.log(habitatLayer.fields[0].name);
                     });
                    
         });
       
       return true;
       }
+    
+    function createPolygonGraphic(vertices, polyComplete){
+      view.graphics.removeAll();
+      var polygon = {
+        type: "polygon", // autocasts as Polygon
+        rings: vertices,
+        spatialReference: view.spatialReference
+      };
+
+      var graphic = new Graphic({
+        geometry: polygon,
+        symbol: {
+          type: "simple-fill", // autocasts as SimpleFillSymbol
+          color: [15, 15, 128, 0.5],
+          style: "solid",
+          outline: {  // autocasts as SimpleLineSymbol
+            color: "black",
+            width: 1
+          }
+        }
+      });
+      view.graphics.add(graphic);
+      if(polyComplete){
+        infoWindow.visible = true;
+        queryFeatureLayerView(polygon, "intersects");
+      }
+    }
+    
+    function enableCreatePolygon(draw, view) {
+      var action = draw.create("polygon");
+      // PolygonDrawAction.vertex-add
+      // Fires when user clicks, or presses the "F" key.
+      // Can also be triggered when the "R" key is pressed to redo.
+      action.on("vertex-add", function (evt) {
+        createPolygonGraphic(evt.vertices, false);
+      });
+
+      // PolygonDrawAction.vertex-remove
+      // Fires when the "Z" key is pressed to undo the last added vertex
+      action.on("vertex-remove", function (evt) {
+        createPolygonGraphic(evt.vertices, false);
+      });
+
+      // Fires when the pointer moves over the view
+      action.on("cursor-update", function (evt) {
+        createPolygonGraphic(evt.vertices, false);
+      });
+
+      // Add a graphic representing the completed polygon
+      // when user double-clicks on the view or presses the "C" key
+      action.on("draw-complete", function (evt) {
+        createPolygonGraphic(evt.vertices, true);
+      });
+    }
+    
+     
       
      function downloadReport() {
         var reportFile = document.createElement('a');
@@ -355,18 +427,23 @@
       view.on("click", function(event){
         
         infoWindow.location = event.mapPoint;
-        if(queryFeatureLayerView(event.mapPoint, "intersects")){
-           infoWindow.visible = true;
-           searchWidget.searchTerm = event.mapPoint.latitude.toFixed(4) + ", " + event.mapPoint.longitude.toFixed(4);
-        }
-        else{
-           infoWindow.visible = false;
+        if(!queryPolygon){
+          view.graphics.removeAll();
+          if(queryFeatureLayerView(event.mapPoint, "intersects")){
+             infoWindow.visible = true;
+             searchWidget.searchTerm = event.mapPoint.latitude.toFixed(4) + ", " + event.mapPoint.longitude.toFixed(4);
+          }
+          else{
+             infoWindow.visible = false;
+          }
         }
         
       });
     
       searchWidget.on("search-start", function(){
         infoWindow.visible = false;
+        if(!queryPolygon){
+          view.graphics.removeAll();
           searchWidget.goToOverride = function(view, goToParams) {
               goToParams.target.zoom = 8;
               goToParams.options.durations = 0;
@@ -380,6 +457,7 @@
           console.log(view.viewpoint.targetGeometry);
           queryTable();
           infoWindow.visible = true;
+        }
       });
     
       infoWindow.on("trigger-action", function (event) {
@@ -388,7 +466,19 @@
             downloadReport();
           }
       });
+    
+    document.getElementById("line-button").onclick = function () {
+          view.graphics.removeAll();
+          infoWindow.visible = false;
+          // creates and returns an instance of PolyLineDrawAction
+          const action = draw.create("polyline");
 
+          // focus the view to activate keyboard shortcuts for sketching
+          view.focus();
+          queryPolygon = true;
+          enableCreatePolygon(draw, view)
+    };
+      
     });
     
   </script>
@@ -432,8 +522,16 @@
     }
     </script>
   </div>
-  <div id="viewDiv"></div>
- 
+  <div id="viewDiv">
+    <div
+        id="line-button"
+        class="esri-widget esri-widget--button esri-interactive"
+        title="Draw polyline"
+      >
+        <span class="esri-icon-polyline"></span>
+      </div>
+  </div>
+  
 </body>
 
 </html>
