@@ -163,22 +163,30 @@
       var testTable = new FeatureLayer ({
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/features/FeatureServer"
       });
+      var stateLayer = new FeatureLayer ({
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/TX_counties/FeatureServer"
+      });
     
       var habitat; //A variable that holds the habitat grid code for querying
       var minDepth; //Holds the minimum depth grid code for querying
       var maxDepth; //Holds the maximum depth grid code for querying
       var reportText; //The information that returned in the downloaded report
       var queryPolygon = false;
+      var state;
     
     function queryTable(){
         var name = []; //Array holding species common names
         var lifestage = []; //Array holding species lifestages
+        var stateRow = "";
         var windowText = []; //Text to display on the pop up info window
         var salMin = []; //Array for minimum salinity
         var salMax = []; //Array for maximum salinity
         reportText = ["Species,common_name,Life_stage,salinity_low,salinity_high,depth_low,depth_high,TX,LA,MS,AL,FL,GA,SC,NC"
 ];//Populate the report text with column headers
        
+        if(state == 48){
+          stateRow = "TX";
+        }
        if(minDepth > 0 && minDepth <= 1){
          minDepth = 0;//This considers the MHHW of texas
        }
@@ -192,7 +200,7 @@
            console.log("Case 13");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -200,7 +208,7 @@
            console.log("Case 14");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -208,7 +216,7 @@
            console.log("Case 15");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -216,7 +224,7 @@
            console.log("Case 16");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -224,7 +232,7 @@
            console.log("Case 17");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -232,7 +240,7 @@
            console.log("Case 18");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -240,7 +248,7 @@
            console.log("Case 19");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -248,7 +256,7 @@
            console.log("Case 21");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -256,7 +264,7 @@
            console.log("Case 22");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -264,7 +272,7 @@
            console.log("Case 23");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+")"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -351,9 +359,13 @@
                         }
                         
                       });
-                      queryTable();
-                    });
-                   
+                      stateLayer.queryFeatures(habitatQuery).then(function(result) {
+                        result.features.forEach(function(feature){
+                          state = feature.attributes.STATEFP
+                        });
+                        queryTable();
+                      });
+                    });      
         });
       
       return true;
