@@ -256,7 +256,7 @@
            console.log("Case 21");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(depth_low <= "+maxDepth+" AND depth_high >= -1) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -507,7 +507,8 @@
         <p align = "center" >The mapping tool responds to two styles of input:
         <li align = "center" >By clicking/touching your specific area of interest.</li>
         <li align = "center" >Entering in a "latitude, longitude" or current location in the search.</li>
-         You will see a window pop up on the map explaining whether an EFH was found, followed by species common name and their life stages.
+        <li align = "center" >By clicking the draw icon on the top left of the map, you can draw a polygon representing your project area. Simply start the polygon by click somewhere on the map, and continue adding points until you have covered your project area. Double click to finish your area. The project area will disappear once you click somewhere on the map or click the draw icon again.</li></p>
+         <p align = "center" >You will see a window pop up on the map explaining whether an EFH was found, followed by species common name and their life stages.
         </p>
         <p align = "center" >A CSV is available to download for your point of interest by clicking the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the resulting species, scientific names, life stages, minimum and maximum depth and salinity, and states where they are commonly found.</p>
         <p align = "center" >For more information on offshore EFH designations, or visible EFH boundaries, please visit the NOAA EFH Mapper tool (Link here).</p>
