@@ -150,57 +150,38 @@
       view.ui.add("line-button", "top-left");
     
      //Load in the feature layers used for querying depth/habitat/species parameter
- 
-      var depthLayer = new FeatureLayer({
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/tx_depth_poly/FeatureServer"
-      });
+
       var habitatLayer = new FeatureLayer ({
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_TXcoast_WGS/FeatureServer"
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_landcover_GulfSansFL/FeatureServer"
       });
       var parameterTable = new FeatureLayer ({
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/querytable/FeatureServer"
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/EFHQueryTable/FeatureServer"
       }); 
       var testTable = new FeatureLayer ({
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/features/FeatureServer"
       });
-      var stateLayer = new FeatureLayer ({
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/TX_counties/FeatureServer"
-      });
     
       var habitat; //A variable that holds the habitat grid code for querying
-      var minDepth; //Holds the minimum depth grid code for querying
-      var maxDepth; //Holds the maximum depth grid code for querying
       var reportText; //The information that returned in the downloaded report
       var queryPolygon = false;
-      var state;
+      var stateRow = null;
     
     function queryTable(){
         var name = []; //Array holding species common names
         var lifestage = []; //Array holding species lifestages
-        var stateRow = "";
         var windowText = []; //Text to display on the pop up info window
         var salMin = []; //Array for minimum salinity
         var salMax = []; //Array for maximum salinity
         reportText = ["Species,common_name,Life_stage,salinity_low,salinity_high,depth_low,depth_high,TX,LA,MS,AL,FL,GA,SC,NC"
 ];//Populate the report text with column headers
        
-        if(state == 48){
-          stateRow = "TX";
-        }
-       if(minDepth > 0 && minDepth <= 1){
-         minDepth = 0;//This considers the MHHW of texas
-       }
-       minDepth = minDepth*(-1); //The gridcode for depth considers below sea level as negative, but the species parameter table considers it as positive
-       maxDepth = maxDepth*(-1)
-       console.log(minDepth);
-       console.log(maxDepth);
        //Switch case for the queried habitat grid codes, depending on the habitat, the queried salinity high and low changes
        switch(habitat){
          case 13: //Palustrine Forested Wetland
            console.log("Case 13");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -208,7 +189,7 @@
            console.log("Case 14");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -216,7 +197,7 @@
            console.log("Case 15");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -224,7 +205,7 @@
            console.log("Case 16");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -232,7 +213,7 @@
            console.log("Case 17");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -240,7 +221,7 @@
            console.log("Case 18");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -248,7 +229,7 @@
            console.log("Case 19");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -256,7 +237,7 @@
            console.log("Case 21");
            var tableQuery = {
             outFields: ["*"],
-            where: "(depth_low <= "+maxDepth+" AND depth_high >= -1) AND (" + stateRow + " = 'Y')"
+            where: "(" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -264,7 +245,7 @@
            console.log("Case 22");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 4) AND (salinity_high >= 0) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -272,7 +253,7 @@
            console.log("Case 23");
            var tableQuery = {
             outFields: ["*"],
-            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (depth_low <= "+maxDepth+" AND depth_high >= " +minDepth+") AND (" + stateRow + " = 'Y')"
+            where: "(salinity_low <= 38) AND (salinity_high >= 5) AND (" + stateRow + " = 'Y')"
            }
            habitat = 0;
            break;
@@ -280,20 +261,21 @@
            console.log("Default")
            var tableQuery = {
             outFields: ["*"],
-            where: "'common name' = 'Nothing'"
-          }
+            where: "'common_name' = 'Nothing'"
+           }
        }
           //Query species parameter table using the query generated by the switch case
+      console.log(tableQuery);
           parameterTable.queryFeatures(tableQuery).then(function(result) {
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
                       name.push(feature.attributes.common_name);
-                      windowText.push("<b>"+feature.attributes.common_name+"</b><li>"+feature.attributes.Life_stage+"</li>");
+                      windowText.push("<b>"+feature.attributes.common_name+"</b><li>"+feature.attributes.life_stage+"</li>");
                     }
                     else{
-                      windowText.push("<li>"+feature.attributes.Life_stage+"</li>");
+                      windowText.push("<li>"+feature.attributes.life_stage+"</li>");
                     }
-                    reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.Life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.TX+","+feature.attributes.LA+","+feature.attributes.MS+","+feature.attributes.AL+","+feature.attributes.FL+","+feature.attributes.GA+","+feature.attributes.SC+","+feature.attributes.NC);
+                    reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.TX+","+feature.attributes.LA+","+feature.attributes.MS+","+feature.attributes.AL+","+feature.attributes.FL+","+feature.attributes.GA+","+feature.attributes.SC+","+feature.attributes.NC);
                   });
               
                  if(name[0] != null) {
@@ -302,22 +284,22 @@
                       infoWindow.actions = [downloadReportAction];
                       infoWindow.visible = true;
                  }
+                 else{
+                   infoWindow.title = "No EFH Species found in this area";
+                   infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>An EFH designation may still be nearby this specific area. If unsure, check other points near the area.</li>"; 
+                   infoWindow.actions = [];
+                 }
             queryPolygon = false;
-            minDepth = null;
-            maxDepth = null;
            });
         return true;
       }
     
     function queryFeatureLayerView(shape, spatialRelationship, sqlExpression){
-        infoWindow.title = "No EFH Species found in this area";
-        infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>An EFH designation may still be nearby this specific area. If unsure, check other points near the area.</li>"; 
+        infoWindow.title = "Searching for an EFH";
+        infoWindow.content = "Please wait a moment..."; 
         infoWindow.actions = [];
        
         console.log(shape);
-        if (!map.findLayerById(depthLayer.id)) {
-          depthLayer.outFields = ["*"];
-        }
         if (!map.findLayerById(habitatLayer.id)) {
           habitatLayer.outFields = ["*"];
         }
@@ -330,16 +312,9 @@
           returnGeometry: false,
           where: sqlExpression
         }; 
-        var depthQuery = {
-          geometry: shape,
-          distance: 0,
-          spatialRelationship: spatialRelationship,
-          outFields: ["*"],
-          returnGeometry: false,
-          where: sqlExpression
-        }; 
         habitatLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
+                      
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                           habitat = feature.attributes.gridcode;
                           //console.log("Habitat" + feature.attributes.gridcode);
@@ -348,25 +323,12 @@
                           habitat = feature.attributes.gridcode;
                           //console.log("Habitat" + feature.attributes.gridcode);
                       }
+                      
+                      stateRow = feature.attributes.State;
                     }); 
-                    depthLayer.queryFeatures(depthQuery).then(function(result) {
-                      result.features.forEach(function(feature){
-                        if(minDepth == null || minDepth < feature.attributes.gridcode_f){
-                          minDepth = feature.attributes.gridcode_f;
-                        }
-                        if(maxDepth == null || maxDepth > feature.attributes.gridcode_f){
-                          maxDepth = feature.attributes.gridcode_f;
-                        }
-                        
-                      });
-                      stateLayer.queryFeatures(habitatQuery).then(function(result) {
-                        result.features.forEach(function(feature){
-                          state = feature.attributes.STATEFP
-                        });
-                        queryTable();
-                      });
+                      console.log("habitat: " + habitat);
+                      queryTable();
                     });      
-        });
       
       return true;
       }
