@@ -87,12 +87,12 @@
         basemap: "topo-vector"
       });
 
-      //View centered on Galvestion/Houston
+      //Create the map view
       var view = new MapView({
-        container: "viewDiv",
+        container: "viewDiv", //set it to the html division
         map: map,
-        center: [-94.82100,29.55100],
-        zoom: 8,
+        center: [-94.82100,29.55100], //View centered on Galvestion/Houston
+        zoom: 8, //Just a good zoom factor for the Texas coast
         popup: {
             dockEnabled: true,
             dockOptions: {
@@ -103,6 +103,7 @@
             }
           },
       });
+      //A draw constructor for drawing the project area polygon
       const draw = new Draw({
           view: view
       });
@@ -112,14 +113,14 @@
         view: view,
         nextBasemap: "hybrid"
       });
-      view.ui.add(basemapToggle, "bottom-right");
+      view.ui.add(basemapToggle, "bottom-right"); //Set to the bottom right
     
       //Addition of the search widget to allow it to search lat/longs and current location for querying
       var searchWidget = new Search ({ 
         view: view,
-        includeDefaultSources: false,
-        popupEnabled: false,
-        resultGraphicEnabled: false,
+        includeDefaultSources: false, //Remove the usual search sources
+        popupEnabled: false, //Keep the search from popping up its own results
+        resultGraphicEnabled: false, //No need to offer possible results
         sources: [{//This is the source that allows for querying lat/long
               locator: new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer" }),
               placeholder: "Enter Lat/Long",
@@ -131,28 +132,26 @@
             }],
         locationEnabled: true
       });
-      view.ui.add(searchWidget, "top-right");
+      view.ui.add(searchWidget, "top-right");//Set the search to the top right
     
       //Addition of the button found on the query results window that pops up, used for downloading a CSV file
       var downloadReportAction = {
           title: "Download CSV",
           id: "downloadReport",
-          image: "https://umiami.maps.arcgis.com/sharing/rest/content/items/f2676983a0ed4e769e2e09ab7bf0b8eb/data"
+          image: "https://umiami.maps.arcgis.com/sharing/rest/content/items/f2676983a0ed4e769e2e09ab7bf0b8eb/data" //Image for the download button hosted from ArcGIS
       };
 
       //Query results window added with no information
       var infoWindow = new Popup ({
         view: view,
-        actions: [downloadReportAction]
+        actions: [downloadReportAction]//Add the download button
       });
-      view.ui.add(infoWindow);
-    
+      view.ui.add(infoWindow);//Adds the info window to the view, but visibility is controlled by the querying
       
-      
+      //The line button is constructed in the html, but set in the view here.
       view.ui.add("line-button", "top-left");
     
-     //Load in the feature layers used for querying depth/habitat/species parameter
-
+     //Load in the feature layers used for querying habitat/species parameter
       var habitatLayer = new FeatureLayer ({
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_landcover_GulfSansFL/FeatureServer"
       });
@@ -163,9 +162,9 @@
     
       var habitat; //A variable that holds the habitat grid code for querying
       var reportText; //The information that returned in the downloaded report
-      var queryPolygon = false;
-      var stateRow = null;
-      var drawing = false;
+      var queryPolygon = false; //Used to determine whether querying a polygon project area
+      var stateRow = null; //Used to hold the state results of the query
+      var drawing = false; //Used to determine
     
     function queryTable(){
         var name = []; //Array holding species common names
@@ -464,7 +463,6 @@
             const action = draw.create("polyline");
 
             // focus the view to activate keyboard shortcuts for sketching
-            view.focus();
             queryPolygon = true;
             enableCreatePolygon(draw, view)
             drawing = true;
