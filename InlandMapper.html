@@ -10,14 +10,16 @@
     #viewDiv {
       padding: 0;
       margin: 0;
-      height: 100%;
+      height: 95%;
       width: 100%;
     }
     #header {
       padding-top: 5px;
       padding-bottom: 5px;
       margin: auto;
-      height: 40px;
+      height: 5%;
+      min-height: 40px;
+      max-height: 40px;
       width: 100%;
       background-color: #00467F;
       text-align: center;
@@ -164,14 +166,11 @@
       var reportText; //The information that returned in the downloaded report
       var queryPolygon = false; //Used to determine whether querying a polygon project area
       var stateRow = null; //Used to hold the state results of the query
-      var drawing = false; //Used to determine
+      var drawing = false; //Used to determine whether the user is currently drawing
     
     function queryTable(){
         var name = []; //Array holding species common names
-        var lifestage = []; //Array holding species lifestages
         var windowText = []; //Text to display on the pop up info window
-        var salMin = []; //Array for minimum salinity
-        var salMax = []; //Array for maximum salinity
         reportText = ["Species,common_name,Life_stage,salinity_low,salinity_high,depth_low,depth_high,comments"
 ];//Populate the report text with column headers
        
@@ -272,9 +271,6 @@
                     if(feature.attributes.common_name != name[name.length-1]){
                       name.push(feature.attributes.common_name);
                       windowText.push("<li><b>"+feature.attributes.common_name+"</b></li>");
-                    }
-                    else{
-                      
                     }
                     reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.comments);
                   });
@@ -461,8 +457,6 @@
             infoWindow.visible = false;
             // creates and returns an instance of PolyLineDrawAction
             const action = draw.create("polyline");
-
-            // focus the view to activate keyboard shortcuts for sketching
             queryPolygon = true;
             enableCreatePolygon(draw, view)
             drawing = true;
