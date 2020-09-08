@@ -147,6 +147,8 @@
       });
       view.ui.add(infoWindow);
     
+      
+      
       view.ui.add("line-button", "top-left");
     
      //Load in the feature layers used for querying depth/habitat/species parameter
@@ -163,6 +165,7 @@
       var reportText; //The information that returned in the downloaded report
       var queryPolygon = false;
       var stateRow = null;
+      var drawing = false;
     
     function queryTable(){
         var name = []; //Array holding species common names
@@ -363,6 +366,9 @@
       if(polyComplete){
         infoWindow.visible = true;
         queryFeatureLayerView(polygon, "intersects");
+        drawing = false;
+        document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-polygon esri-interactive";
+        view.ui.add("line-button", "top-left");
       }
     }
     
@@ -446,17 +452,30 @@
             downloadReport();
           }
       });
-    
+
+
     document.getElementById("line-button").onclick = function () {
           view.graphics.removeAll();
-          infoWindow.visible = false;
-          // creates and returns an instance of PolyLineDrawAction
-          const action = draw.create("polyline");
+          if(!drawing){
+            document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-close esri-interactive";
+            view.ui.add("line-button", "top-left");
+            infoWindow.visible = false;
+            // creates and returns an instance of PolyLineDrawAction
+            const action = draw.create("polyline");
 
-          // focus the view to activate keyboard shortcuts for sketching
-          view.focus();
-          queryPolygon = true;
-          enableCreatePolygon(draw, view)
+            // focus the view to activate keyboard shortcuts for sketching
+            view.focus();
+            queryPolygon = true;
+            enableCreatePolygon(draw, view)
+            drawing = true;
+          }
+          else{
+            document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-polygon esri-interactive";
+            view.ui.add("line-button", "top-left");
+            queryPolygon = false;
+            draw.reset();
+            drawing = false;
+          }
     };
       
     });
@@ -506,10 +525,9 @@
   <div id="viewDiv">
     <div
         id="line-button"
-        class="esri-widget esri-widget--button esri-interactive"
-        title="Draw polyline"
-      >
-        <span class="esri-icon-polyline"></span>
+        class="esri-widget esri-widget--button esri-icon-polygon esri-interactive"
+        title="Draw polygon"
+      > 
       </div>
   </div>
   
