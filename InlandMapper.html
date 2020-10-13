@@ -367,8 +367,13 @@
                       console.log("habitat: " + habitat);
                       salinityBoundLayer.queryFeatures(habitatQuery).then(function(result){
                         result.features.forEach(function(feature){
-                            if(feature.attribute.EFH_Status == "EFH Consultation Possible - More info required"){
-                              maybe == true;
+                          console.log(feature.attributes.EFH_Status);
+                            if(feature.attributes.EFH_Status == "EFH Consultation Possible - More info required"){
+                               maybe = true;
+                              
+                            }
+                            else{
+                              maybe = false;
                             }
                         });
                         queryTable();
