@@ -287,7 +287,8 @@
                   });
               
                  if(name[0] != null) {
-                      infoWindow.title = "EFH Species Found:";
+                      if(maybe){infoWindow.title = "Possible EFH Species Found:";}
+                      else{infoWindow.title = "EFH Species Found:";}
                       infoWindow.content = windowText.join(""); 
                       infoWindow.actions = [downloadReportAction];
                       infoWindow.visible = true;
