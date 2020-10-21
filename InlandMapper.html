@@ -172,7 +172,8 @@
       var stateRow = null; //Used to hold the state results of the query
       var drawing = false; //Used to determine whether the user is currently drawing
       var maybe = false; //Used to determine whether this is a maybe zone
-      var councilName;
+      var councilName; //To get the wording of the results proper with the council side.
+      var resultHabitats = [];
     
     function queryTable(){
         var name = []; //Array holding species common names
@@ -278,6 +279,8 @@
                   else{
                     windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
                   }
+                  windowText.push("<p> The following details the habitats queried in your search: "+resultHabitats.join(", ")+"</p>");
+                  windowText.push("<p> Potential species found in these habitats are geographic zone: </p>")
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
                       name.push(feature.attributes.common_name);
@@ -315,6 +318,8 @@
         infoWindow.content = "Please wait a moment..."; 
         infoWindow.actions = [];
         councilName = "";
+        resultHabitats = [];
+        var addHabitat = true;
        
         console.log(shape);
         if (!map.findLayerById(GulfLayer.id)) {
@@ -335,15 +340,23 @@
         GulfLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
                       councilName = "Gulf";
+                      addHabitat = true;
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                           habitat = feature.attributes.gridcode;
-                          //console.log("Habitat" + feature.attributes.gridcode);
                       }
                       else{
                           habitat = feature.attributes.gridcode;
-                          //console.log("Habitat" + feature.attributes.gridcode);
                       }
-                      
+                      if(resultHabitats.length == 0){
+                          resultHabitats.push(feature.attributes.grid_name);
+                          console.log("first " +resultHabitats[0]);
+                      }//If resultHabitats is empty
+                      for(i = 0; i < resultHabitats.length; i++){
+                          if(resultHabitats[i] == feature.attributes.grid_name){
+                            addHabitat = false;
+                          }//If resultHabitat already has this habitat, don't add it
+                      }//loop through the habitat list, populating it with all the queried habitats
+                      if(addHabitat && resultHabitats.length != 0){resultHabitats.push(feature.attributes.grid_name);}
                       stateRow = feature.attributes.State;
                     }); 
                     SAtlanticLayer.queryFeatures(habitatQuery).then(function(result) {
@@ -354,6 +367,7 @@
                               else{
                                 councilName = "the South Atlantic";
                               }
+                              addHabitat = true;
                               if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                                   habitat = feature.attributes.gridcode;
                                   
@@ -362,7 +376,16 @@
                                   habitat = feature.attributes.gridcode;
                           
                               }
-                      
+                              if(resultHabitats.length == 0){
+                                  resultHabitats.push(feature.attributes.grid_name);
+                                  console.log("first " +resultHabitats[0]);
+                              }//If resultHabitats is empty
+                              for(i = 0; i < resultHabitats.length; i++){
+                                  if(resultHabitats[i] == feature.attributes.grid_name){
+                                    addHabitat = false;
+                                  }//If resultHabitat already has this habitat, don't add it
+                              }//loop through the habitat list, populating it with all the queried habitats
+                              if(addHabitat && resultHabitats.length != 0){resultHabitats.push(feature.attributes.grid_name);}
                               stateRow = feature.attributes.State;
                             });
                       console.log("habitat: " + habitat);
