@@ -280,7 +280,7 @@
                     windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
                   }
                   windowText.push("<p> The following details the habitats queried in your search: "+resultHabitats.join(", ")+"</p>");
-                  windowText.push("<p> Potential species found in these habitats are geographic zone: </p>")
+                  windowText.push("<p> Potential species found in these habitats and geographic zone: </p>")
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
                       name.push(feature.attributes.common_name);
