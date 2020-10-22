@@ -78,7 +78,6 @@
      font-family:'verdana';
      font-size: 13px;
      padding: 5px;
-
   }
   .show {display: block;}
   </style>
@@ -300,7 +299,7 @@
                   else{
                     windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
                   }
-                  windowText.push("<p> The following details the habitats queried in your search: <b>"+resultHabitats.join(", ")+"</b></p>");
+                  windowText.push("<p> The following lists the habitats found in your search: <b>"+resultHabitats.join(", ")+"</b></p>");
                   windowText.push("<p> Potential species found in these habitats and geographic zone: </p>")
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
@@ -309,7 +308,7 @@
                     }
                     reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.comments);
                   });
-              
+                 
                  if(name[0] != null) {
                       if(maybe){infoWindow.title = "Possible EFH Consultation Required";}
                       else{infoWindow.title = "EFH Consultation Required";}
