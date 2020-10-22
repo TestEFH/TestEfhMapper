@@ -22,6 +22,26 @@
       background-color: #00467F;
       text-align: center;
     }
+    #abtheader {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      margin: auto;
+      height: 22px;
+      width: 100%;
+      background-color: #0046AF;
+      text-align: center;
+      border-style: solid;
+      border-width: 2px;
+    }
+    #abtcontent {
+      padding-bottom: 5px;
+      margin: auto;
+      width: 100%;
+      text-align: center;
+      border-style: solid;
+      border-width: 2px;
+      background: #F1F1F1;
+    }
    .dropbtn {
      background-color: #00467F;
      color: white;
@@ -46,11 +66,12 @@
      display: none;
      position: absolute;
      right: 0;
-     background-color: #f1f1f1;
+     background-color: #D1D1D1;
      border-style: solid;
      border-width: 1px;
      border-color: black;
      min-width: 350px;
+     max-height: 300px;
      overflow: auto;
      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
      z-index: 1;
@@ -279,7 +300,7 @@
                   else{
                     windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
                   }
-                  windowText.push("<p> The following details the habitats queried in your search: "+resultHabitats.join(", ")+"</p>");
+                  windowText.push("<p> The following details the habitats queried in your search: <b>"+resultHabitats.join(", ")+"</b></p>");
                   windowText.push("<p> Potential species found in these habitats and geographic zone: </p>")
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
@@ -470,7 +491,7 @@
      function downloadReport() {
         var reportFile = document.createElement('a');
         reportFile.setAttribute('href', 'data:text/plain;charset=utf-8,' +  encodeURIComponent(reportText.join("\n")));
-        reportFile.setAttribute('download', "test.csv");
+        reportFile.setAttribute('download', "EFHReportTable.csv");
 
         reportFile.style.display = 'none';
         reportFile.click();
@@ -553,17 +574,20 @@
     <div class="dropdown">
       <button onclick="dropDownFunction()" class="dropbtn">About</button>
       <div id="aboutMenu" class="about-content">
-        <p align = "center" >The Inland EFH Mapper informs users of potential essential fishery habitats (EFHs), displaying the species and their lifestages at a provided coordinate.</p>
-        <p align = "center" >The mapping tool responds to two styles of input:
-        <li align = "center" >By clicking/touching your specific area of interest.</li>
-        <li align = "center" >Entering in a "latitude, longitude" or current location in the search.</li>
-        <li align = "center" >By clicking the draw icon on the top left of the map, you can draw a polygon representing your project area. Simply start the polygon by click somewhere on the map, and continue adding points until you have covered your project area. Double click to finish your area. The project area will disappear once you click somewhere on the map or click the draw icon again.</li></p>
-         <p align = "center" >You will see a window pop up on the map explaining whether an EFH was found, followed by species common name and their life stages.
+        <div id = "abtheader"><t style="color:white; font-family:'verdana';font-size: 135%;" >Welcome to the Inland EFH Mapper!</t></div>
+        <div id = "abtcontent">
+        <p>This panel provides an overview of Essential Fish Habitat (EFH) consultation requirements and directions on how to use the Inland EFH Mapping tool. This Inland EFH Mapping tool should be used as a guide to help inform users which species may require an EFH consultation for a given project on coastal-, estuary-, or tributary-adjacent land. </p>
+        <p>This tool responds to three styles of input:
+        <li>By left clicking with your mouse or touching on your touch screen your specific area of interest.</li>
+        <br><li>Entering in a "latitude, longitude" or selecting "current location" in the search bar.</li>
+        <br><li>By selecting the draw icon on the top left of the map, a project area can be drawn. Once the draw icon is selected, start the shape by left clicking/touching somewhere on the map, and continue clicking/touching new points until you have covered your project area. Rapidly double click/touch to finish your area. Your query will show for the entire area. <i>To exit out of draw mode, simply select the draw icon again, now represented by an "X".</i></li></p>
+         <p>A results will window pop up on the map explaining whether an EFH is required or possible followed by species common name and their life stages.
         </p>
-        <p align = "center" >A CSV is available to download for your point of interest by clicking the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the resulting species, scientific names, life stages, minimum and maximum depth and salinity, and states where they are commonly found.</p>
-        <p align = "center" >For more information on offshore EFH designations, or visible EFH boundaries, please visit the NOAA EFH Mapper tool.</p>
+        <p>A CSV is available to download for your point of interest by clicking the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the resulting species, scientific names, life stages, minimum and maximum depth and salinity, and any extra comments.</p>
+        <p>This mapping tool is not a comprehensive EFH repository. Offshore EFH boundaries are not included here. The focus of these layers is inland habitat along coastline, estuaries, and tributaries. Species and life stage boundaries may extend off the coast further than depicted. Life stages with offshore habitat ranges are not included in these layers. Please refer to the main Essential Fish Habitat Mapper for offshore EFH boundaries.</p>
+        <p><i>*This EFH web mapper is a tool to assist in the EFH consultation process and should not be used as the sole source to determine whether a NMFS EFH consultation should be conducted.</i></p>   
         <br><a href="https://arcg.is/0iSaOD">Click here to send us feedback!</a>
-       
+        </div>
       </div>
     </div>
     <script>
