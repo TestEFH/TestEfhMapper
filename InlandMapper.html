@@ -54,12 +54,14 @@
 
   .dropbtn:hover, .dropbtn:focus {
      background-color: #00067F;
+     border-radius: 6px;
   }
 
   .dropdown {
      float: right;
      position: relative;
      display: inline-block;
+
   }
 
   .about-content {
@@ -78,6 +80,7 @@
      font-family:'verdana';
      font-size: 13px;
      padding: 5px;
+     border-radius: 6px;
     
   }
   .show {display: block;}
@@ -88,9 +91,11 @@
   }
   .tooltip .tooltiptext {
     width: 120px;
-    background-color: black;
+    background-color: #00007F;
     color: #fff;
     text-align: center;
+    font-size: 12px;
+    font-family: 'verdana';
     padding: 5px 0;
     border-radius: 6px;
     position: absolute;
@@ -667,7 +672,7 @@
     <div 
         id="drawTooltip"
         class="tooltip">
-        <span class="tooltiptext">Double-click when finished.</span>
+        <span class="tooltiptext">Click to Start. Double-click when finished.</span>
         <script>
           var tooltip = document.querySelector('.tooltip span');
 
