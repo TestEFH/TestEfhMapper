@@ -81,24 +81,39 @@
     
   }
   .show {display: block;}
+  .tooltip {
+    position: relative;
+    display: inline-block; 
+    visibility: hidden;
+  }
+  .tooltip .tooltiptext {
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+  }
   ::-webkit-scrollbar {
-  width: 8px;
-}
+    width: 8px;
+  }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-}
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
  
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #00467F; 
-}
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #00467F; 
+  }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
   </style>
   <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.15/"></script>
@@ -189,7 +204,9 @@
       
       //The line button is constructed in the html, but set in the view here.
       view.ui.add("line-button", "top-left");
-    
+      var tooltip = document.getElementById("drawTooltip");
+      view.ui.add("drawTooltip", "manual");
+      
      //Load in the feature layers used for querying habitat/species parameter
       var GulfLayer = new FeatureLayer ({
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_GulfCoast_WGS_EFHbound/FeatureServer"
@@ -213,6 +230,7 @@
       var maybe = false; //Used to determine whether this is a maybe zone
       var councilName; //To get the wording of the results proper with the council side.
       var resultHabitats = [];
+      
     
     function queryTable(){
         var name = []; //Array holding species common names
@@ -473,6 +491,8 @@
         queryFeatureLayerView(polygon, "intersects");
         drawing = false;
         document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-polygon esri-interactive";
+        document.getElementById("drawTooltip").style.visibility = "hidden";
+        view.ui.add("drawTooltip", "manual");
         view.ui.add("line-button", "top-left");
       }
     }
@@ -564,6 +584,10 @@
           if(!drawing){
             document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-close esri-interactive";
             view.ui.add("line-button", "top-left");
+
+            document.getElementById("drawTooltip").style.visibility = "visible";
+            view.ui.add("drawTooltip", "manual");
+      
             infoWindow.visible = false;
             // creates and returns an instance of PolyLineDrawAction
             const action = draw.create("polyline");
@@ -574,12 +598,16 @@
           else{
             document.getElementById("line-button").className = "esri-widget esri-widget--button esri-icon-polygon esri-interactive";
             view.ui.add("line-button", "top-left");
+            
+            document.getElementById("drawTooltip").style.visibility = "hidden";
+            view.ui.add("drawTooltip", "manual");
+            
             queryPolygon = false;
             draw.reset();
             drawing = false;
           }
     };
-      
+    
     });
     
   </script>
@@ -635,7 +663,23 @@
         class="esri-widget esri-widget--button esri-icon-polygon esri-interactive"
         title="Draw polygon"
       > 
-      </div>
+    </div>
+    <div 
+        id="drawTooltip"
+        class="tooltip">
+        <span class="tooltiptext">Double-click when finished.</span>
+        <script>
+          var tooltip = document.querySelector('.tooltip span');
+
+          window.onmousemove = function (e) {
+          var x = (e.clientX) + 'px',
+              y = (e.clientY) + 'px';
+            tooltip.style.top = y;
+            tooltip.style.left = x;
+            
+          };
+         </script>  
+    </div>
   </div>
   
 </body>
