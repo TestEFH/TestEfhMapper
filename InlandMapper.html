@@ -218,17 +218,17 @@
       
      //Load in the feature layers used for querying habitat/species parameter
       var GulfLayer = new FeatureLayer ({//Gulf ccap layer
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_GulfCoast_WGS_EFHbound/FeatureServer"
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_GOM_WGS_EFH/FeatureServer"
       });
       var SAtlanticLayer =  new FeatureLayer ({//South atlantic ccap layer
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_SAtlantic_WGS_salinitycl/FeatureServer"
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/ccap_2016_SA_WGS_EFH/FeatureServer"
       });
       var salinityBoundLayer = new FeatureLayer ({//Salinity bound
-        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/GulfCoast_Salinity_boundEFH/FeatureServer"
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/GOM_salinityextent_EFH/FeatureServer"
       });
       var parameterTable = new FeatureLayer ({//Species parameter table
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/EFHQueryTable/FeatureServer"
-      }); 
+      });
 
     
       var habitat; //A variable that holds the habitat grid code for querying
