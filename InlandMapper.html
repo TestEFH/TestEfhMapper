@@ -26,7 +26,7 @@
       padding-top: 5px;
       padding-bottom: 5px;
       margin: auto;
-      height: 22px;
+      height: 20px;
       width: 100%;
       background-color: #0046AF;
       text-align: center;
@@ -38,7 +38,6 @@
       padding-bottom: 5px;
       margin: auto;
       width: 100%;
-      text-align: center;
       border-style: solid;
       border-width: 2px;
       border-color: #F9F9F9;
@@ -74,7 +73,7 @@
      border-style: solid;
      border-width: 1px;
      border-color: black;
-     min-width: 350px;
+     min-width: 450px;
      max-height: 600px;
      overflow: auto;
      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -199,7 +198,7 @@
       var downloadReportAction = {
           title: "Download CSV",
           id: "downloadReport",
-          image: "EFHDownloadIcon.jpg" //Image for the download button hosted from ArcGIS
+          image: "https://umiami.maps.arcgis.com/sharing/rest/content/items/f2676983a0ed4e769e2e09ab7bf0b8eb/data" //Image for the download button hosted from ArcGIS
       };
 
       //Query results window added with no information
@@ -226,9 +225,12 @@
       var salinityBoundLayer = new FeatureLayer ({//Salinity bound
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/GOM_salinityextent_EFH/FeatureServer"
       });
+      var EEZLayer = new FeatureLayer ({//Southeast EEZ Bound
+        url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Southeast_EEZ/FeatureServer"
+      })
       var parameterTable = new FeatureLayer ({//Species parameter table
         url: "https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/EFHQueryTable/FeatureServer"
-      });
+      }); 
 
     
       var habitat; //A variable that holds the habitat grid code for querying
@@ -237,7 +239,9 @@
       var stateRow = null; //Used to hold the state results of the query
       var drawing = false; //Used to determine whether the user is currently drawing
       var maybe = false; //Used to determine whether this is a maybe zone
+      var EEZ = false; //Used to determine if this is within the EEZ
       var councilName; //To get the wording of the results proper with the council side.
+      var contactInfo; //Contact info depending on the management zone.
       var resultHabitats = []; //To contain all the habitats queried in a search
       
     
@@ -340,12 +344,13 @@
       console.log(tableQuery);
           parameterTable.queryFeatures(tableQuery).then(function(result) {
                   if(maybe) {
-                    windowText.push("<p>A probable essential fishery habitat was found within " + councilName + " fishery management zone. A possible list of species is shown below. Please contact an EFH consultant. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
+                    windowText.push("<p>A probable essential fishery habitat was found within " + councilName + " fishery management zone. A possible list of species is shown below. Please contact an EFH consultant. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information. Contact your local EFH coordinator " + contactInfo + "here</a>.</p>");
                   }//If the selection is within that maybe zone for the salinity bound
                   else{
-                    windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information.</p>");
+                    windowText.push("<p>An essential fishery habitat was found within " + councilName + " fishery management zone. A list of species is shown below. To view further information on life stages, depth ranges, and comments, please use the Download CSV button below to receive a table of information. Contact your local EFH coordinator " + contactInfo + "here</a>.</p>");
                   }//Else the selection is within the definitely zone for the salinity bound
                   //Put the wording in for the habitats found list
+                  console.log(contactInfo);
                   windowText.push("<p> The following lists the habitats found in your search: <b>"+resultHabitats.join(", ")+"</b></p>");
                   //Heading for the species list
                   windowText.push("<p> Potential species found in these habitats and states: </p>")
@@ -368,9 +373,15 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                       infoWindow.visible = true; //Make the window visible
                  }//If the consultation found something
                  else{
-                   if(infoWindow.location.longitude.toFixed(4) > -82){
+                   if(EEZ){
+                     infoWindow.title = "Potential Offshore EFH Necessary";
+                     infoWindow.content = "This project location is outside of the bounds of this mappers inland EFH consideration, but may be within the bound of an offshore EFH. Please refer to the <a href='https://www.habitat.noaa.gov/protection/efh/efhmapper/'>national Essential Fish Habitat Mapper</a> for offshore EFH boundaries."; 
+                     infoWindow.actions = [];
+                     EEZ=false;
+                   }
+                   else if(infoWindow.location.longitude.toFixed(4) > -82){
                       infoWindow.title = "No EFH Consultation Necessary";
-                      infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>Contact your local EFH coordinator for more information.</li>"; 
+                      infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>Contact your <a href='https://www.fisheries.noaa.gov/contact/pace-wilber'>local EFH coordinator</a> for more information.</li>"; 
                       infoWindow.actions = [];
                    }//If there is no EFH on the South Atlantic side add the wording to contact an EFH coordinator
                    else{
@@ -410,6 +421,7 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
         GulfLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
                       councilName = "Gulf";
+                      contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford'>"
                       addHabitat = true;
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                           habitat = feature.attributes.gridcode;
@@ -428,14 +440,16 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                       }//loop through the habitat list, populating it with all the queried habitats
                       if(addHabitat && resultHabitats.length != 0){resultHabitats.push(feature.attributes.grid_name);}
                       stateRow = feature.attributes.State;
-                    }); 
+                    }); //end of gulf ccap results query
                     SAtlanticLayer.queryFeatures(habitatQuery).then(function(result) {
                             result.features.forEach(function(feature){
                               if(councilName = "the Gulf"){
                                 councilName = "both the Gulf and South Atlantic";
+                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford'>"
                               }
                               else{
                                 councilName = "the South Atlantic";
+                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/pace-wilber'>"
                               }
                               addHabitat = true;
                               if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
@@ -457,26 +471,35 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                               }//loop through the habitat list, populating it with all the queried habitats
                               if(addHabitat && resultHabitats.length != 0){resultHabitats.push(feature.attributes.grid_name);}
                               stateRow = feature.attributes.State;
-                            });
-                      console.log("habitat: " + habitat);
+                            });//End of south atlantic ccap results query
                       salinityBoundLayer.queryFeatures(habitatQuery).then(function(result){
                         result.features.forEach(function(feature){
-                          console.log(feature.attributes.EFH_Status);
                             if(feature.attributes.EFH_Status == "EFH Consultation Possible - More info required"){
                                maybe = true;
-                              
                             }
                             else{
                               maybe = false;
                             }
-                        });
-                        queryTable();
-                      });
+                        });//End of Salinity bound results
+                        EEZLayer.queryFeatures(habitatQuery).then(function(result){
+                          result.features.forEach(function(feature){
+                            if(feature.attributes.Name != null){
+                              EEZ = true;
+                            }
+                            else{
+                              EEZ = false;
+                            }
+                            console.log(EEZ);
+                          })//End of EEZ results query
+                          queryTable();
+                        });//End of EEZ query
+                        
+                      });//End of Salinity bound query
                       
-                    });      
-        });
+                    });//End of South atlantic ccap query      
+        });//End of Gulf ccap query
       return true;
-      }
+      }//End of query feature function
     
     function createPolygonGraphic(vertices, polyComplete){
       view.graphics.removeAll();
@@ -633,18 +656,21 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
     <div class="dropdown">
       <button onclick="dropDownFunction()" class="dropbtn">About</button>
       <div id="aboutMenu" class="about-content">
-        <div id = "abtheader"><t style="color:white; font-family:'verdana';font-size: 135%;" >Welcome to the Inland EFH Mapper!</t></div>
+        <div id = "abtheader"><t style="color:white; font-family:'verdana';font-size: 123%;" >Welcome to the NMFS Southest region EFH Mapper!</t></div>
         <div id = "abtcontent">
-        <p>This panel provides an overview of Essential Fish Habitat (EFH) consultation requirements and directions on how to use the Inland EFH Mapping tool. This Inland EFH Mapping tool should be used as a guide to help inform users which species may require an EFH consultation for a given project on coastal-, estuary-, or tributary-adjacent land. </p>
-        <p>This tool responds to three styles of input:
-        <li>By left clicking with your mouse or touching on your touch screen your specific area of interest.</li>
-        <br><li>Entering in a "latitude, longitude" or selecting "current location" in the search bar.</li>
-        <br><li>By selecting the draw icon on the top left of the map, a project area can be drawn. Once the draw icon is selected, start the shape by left clicking/touching somewhere on the map, and continue clicking/touching new points until you have covered your project area. Rapidly double click/touch to finish your area. Your query will show for the entire area. <i>To exit out of draw mode, simply select the draw icon again, now represented by an "X".</i></li></p>
-         <p>A results window will pop up on the map explaining whether an EFH is required or possible followed by species common name and their life stages.
+        <p style="text-align:center;">This panel provides an overview of Essential Fish Habitat (EFH) consultation requirements and directions on how to use the Inland EFH Mapping tool. This Inland EFH Mapping tool should be used as a guide to help inform users which locations may require an EFH consultation for a given project on coastal-, estuary-, or tributary-adjacent land. </p>
+          <p style="text-align:center;"><b><u>This tool responds to three styles of input:</b></u>
+            <p style="text-align:left;"><u>Option 1:</u>Left click with your mouse or touch your touch screen your specific area of interest.</p>
+        <p style="text-align:left;"><u>Option 2:</u>In the search bar located at the top right-hand corner of the map, enter GPS coordinates (latitude, longitude) or select "current location", which will appear after clicking in the search bar box.</p>
+        <p style="text-align:left;"><u>Option 3:</u>Select the draw icon located at the top left corner of the map. Here, you can draw a project area to see if any EFH is found within the scope of the project bounds. Once the draw icon is elected, start the shape by left click/touching somewhere on the map, and continue click/touching new points until you have your desired project area and shape. Rapidly double click/touch to finish drawing your area. Your query will show for the entire area. <i>To exit out of draw mode, simply select the draw icon again, now represented by an "X".</i></p></p>
+        <p style="text-align:center;"><b><u>Interpreting the results:</u></b></p>
+         <p style="text-align:center;">After selecting your area/location, a window will pop up on the map explaining whether an EFH consultation is required, possible, or not required. The habitat(s) found on the location will display, followed by a list of species that may be found in that location.
         </p>
-        <p>A CSV is available to download for your point of interest by clicking the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the resulting species, scientific names, life stages, minimum and maximum depth and salinity, and any extra comments.</p>
-        <p>This mapping tool is not a comprehensive EFH repository. Offshore EFH boundaries are not included here. The focus of these layers is inland habitat along coastline, estuaries, and tributaries. Species and life stage boundaries may extend off the coast further than depicted. Life stages with offshore habitat ranges are not included in these layers. Please refer to the main Essential Fish Habitat Mapper for offshore EFH boundaries.</p>
-        <p><i>*This EFH web mapper is a tool to assist in the EFH consultation process and should not be used as the sole source to determine whether a NMFS EFH consultation should be conducted.</i></p>   
+        <p style="text-align:center;">A CSV is available to download for your point of interest. To download this information to your computer, click the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the species that may be found in a particular location. Information includes common names, scientific names, life stages, minimum/maximum depth and salinity, and relevant comments.</p>
+        <p style ="text-align:center;">This mapping tool is not a comprehensive EFH repository. Offshore EFH boundaries are not included in this tool. The focus of these layers is inland habitat along coastline, estuaries, and tributaries. Species and life stage boundaries may extend off the coast further than depicted. Life stages with offshore habitat ranges are not included in these layers. Please refer to the <a href="https://www.habitat.noaa.gov/protection/efh/efhmapper/">national Essential Fish Habitat Mapper</a> for offshore EFH boundaries.</p>
+        <p style ="text-align:center;">If you require an EFH consultation, depending on the location of your project, use the contact information found <a href="https://www.fisheries.noaa.gov/content/contact-habitat-conservation-division-southeast">here</a> to connect with the appropriate EFH personnel.</p>
+        <p style ="text-align:center;">For general EFH consultation information related to the Southeast Region, please contact <a href="https://www.fisheries.noaa.gov/contact-directory/regional-essential-fish-habitat-coordinators">the Southeast Region Essential Fish Habitat Coordinator</a>.</p>
+        <p style ="text-align:center;"><i>*This EFH web mapper is a tool to assist in the EFH consultation process and should not be used as the sole source to determine whether a NMFS EFH consultation should be conducted.</i></p>   
         <br><a href="https://arcg.is/0iSaOD">Click here to send us feedback!</a>
         </div>
       </div>
@@ -653,20 +679,6 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
     //Toggles showing the content of the instructional menu
     function dropDownFunction() {
       document.getElementById("aboutMenu").classList.toggle("show");
-    }
-
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-      /*if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("about-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
-      }*/
     }
     </script>
   </div>
