@@ -353,11 +353,15 @@
                   console.log(contactInfo);
                   windowText.push("<p> The following lists the habitats found in your search: <b>"+resultHabitats.join(", ")+"</b></p>");
                   //Heading for the species list
-                  windowText.push("<p> Potential species found in these habitats and states: </p>")
+                  if(councilName == "the Gulf"){
+                     windowText.push("<p> Potential species found in these habitats and states: </p>");
+                  }
                   result.features.forEach(function(feature){
                     if(feature.attributes.common_name != name[name.length-1]){
                       name.push(feature.attributes.common_name);
-                      windowText.push("<li><b>"+feature.attributes.common_name+"</b></li>");
+                      if(councilName == "the Gulf"){
+                        windowText.push("<li><b>"+feature.attributes.common_name+"</b></li>");
+                      }
                     }//If this is a new species, add it in.
                     //Text for the downloadable CSV file
 reportText.push(feature.attributes.Species+","+feature.attributes.common_name+","+feature.attributes.life_stage+","+feature.attributes.salinity_low+","+feature.attributes.salinity_high+","+feature.attributes.depth_low+","+feature.attributes.depth_high+","+feature.attributes.comments);
@@ -420,7 +424,7 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
         }; //Create the query for layers
         GulfLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
-                      councilName = "Gulf";
+                      councilName = "the Gulf";
                       contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford'>"
                       addHabitat = true;
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
