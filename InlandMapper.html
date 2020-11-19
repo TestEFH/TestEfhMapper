@@ -379,13 +379,13 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                  else{
                    if(EEZ){
                      infoWindow.title = "Potential Offshore EFH Consultation Necessary";
-                     infoWindow.content = "This project location is outside of the bounds of this mappers inland EFH consideration, but may be within the bound of an offshore EFH. Please refer to the <a href='https://www.habitat.noaa.gov/protection/efh/efhmapper/'>National Essential Fish Habitat Mapper</a> for offshore EFH boundaries."; 
+                     infoWindow.content = "This project location is outside of the bounds of this mappers inland EFH consideration, but may be within the bound of an offshore EFH. Please refer to the <a href='https://www.habitat.noaa.gov/protection/efh/efhmapper/' target='_blank'>National Essential Fish Habitat Mapper</a> for offshore EFH boundaries."; 
                      infoWindow.actions = [];
                      EEZ=false;
                    }
                    else if(infoWindow.location.longitude.toFixed(4) > -82){
                       infoWindow.title = "No EFH Consultation Necessary";
-                      infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>Contact your <a href='https://www.fisheries.noaa.gov/contact/pace-wilber'>local EFH coordinator</a> for more information.</li>"; 
+                      infoWindow.content = "There are a few reasons why an EFH may have not been found here: <li>The habitat may not be suitable to facilitate any EFH species' life stage.</li><li>The depth may not be suitable to facilitate any EFH species' life stage.</li><li>This area may be out of range of this state's designation for EFH species.</li><li>Contact your <a href='https://www.fisheries.noaa.gov/contact/pace-wilber' target='_blank'>local EFH coordinator</a> for more information.</li>"; 
                       infoWindow.actions = [];
                    }//If there is no EFH on the South Atlantic side add the wording to contact an EFH coordinator
                    else{
@@ -425,7 +425,7 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
         GulfLayer.queryFeatures(habitatQuery).then(function(result) {
                     result.features.forEach(function(feature){
                       councilName = "the Gulf";
-                      contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford'>"
+                      contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford' target='_blank'>"
                       addHabitat = true;
                       if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
                           habitat = feature.attributes.gridcode;
@@ -449,11 +449,11 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                             result.features.forEach(function(feature){
                               if(councilName = "the Gulf"){
                                 councilName = "both the Gulf and South Atlantic";
-                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford'>"
+                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford' target='_blank'>"
                               }
                               else{
                                 councilName = "the South Atlantic";
-                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/pace-wilber'>"
+                                contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/pace-wilber' target='_blank'>"
                               }
                               addHabitat = true;
                               if(feature.attributes.gridcode > 15 || feature.attributes.gridcode != 22){
@@ -671,11 +671,11 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
          <p style="text-align:center;">After selecting your area/location, a window will pop up on the map explaining whether an EFH consultation is required, possible, or not required. The habitat(s) found at the location will display, followed by a list of species that may be found in that location.
         </p>
         <p style="text-align:center;">A CSV is available to download for your point of interest. To download this information to your computer, click the "Download CSV" button located at the bottom left of the results window pop up. This CSV will include the species that may be found in a particular location. Information includes common names, scientific names, life stages, minimum/maximum depth and salinity, and relevant comments.</p>
-        <p style ="text-align:center;">This mapping tool is not a comprehensive EFH repository. Offshore EFH boundaries are not included in this tool. The focus of these layers is inland habitat along coastline, estuaries, and tributaries. Species and life stage boundaries may extend off the coast further than depicted. Life stages with offshore habitat ranges are not included in these layers. Please refer to the <a href="https://www.habitat.noaa.gov/protection/efh/efhmapper/">National Essential Fish Habitat Mapper</a> for offshore EFH boundaries.</p>
-        <p style ="text-align:center;">If you require an EFH consultation, depending on the location of your project, use the contact information found <a href="https://www.fisheries.noaa.gov/content/contact-habitat-conservation-division-southeast">here</a> to connect with the appropriate EFH personnel.</p>
-        <p style ="text-align:center;">For general EFH consultation information related to the Southeast Region, please contact <a href="https://www.fisheries.noaa.gov/contact-directory/regional-essential-fish-habitat-coordinators">the Southeast Region Essential Fish Habitat Coordinator</a>.</p>
+        <p style ="text-align:center;">This mapping tool is not a comprehensive EFH repository. Offshore EFH boundaries are not included in this tool. The focus of these layers is inland habitat along coastline, estuaries, and tributaries. Species and life stage boundaries may extend off the coast further than depicted. Life stages with offshore habitat ranges are not included in these layers. Please refer to the <a href="https://www.habitat.noaa.gov/protection/efh/efhmapper/" target='_blank'>National Essential Fish Habitat Mapper</a> for offshore EFH boundaries.</p>
+        <p style ="text-align:center;">If you require an EFH consultation, depending on the location of your project, use the contact information found <a href="https://www.fisheries.noaa.gov/content/contact-habitat-conservation-division-southeast" target='_blank'>here</a> to connect with the appropriate EFH personnel.</p>
+        <p style ="text-align:center;">For general EFH consultation information related to the Southeast Region, please contact <a href="https://www.fisheries.noaa.gov/contact-directory/regional-essential-fish-habitat-coordinators" target='_blank'>the Southeast Region Essential Fish Habitat Coordinator</a>.</p>
         <p style ="text-align:center;"><i>*This EFH web mapper is a tool to assist in the EFH consultation process and should not be used as the sole source to determine whether a NMFS EFH consultation should be conducted.</i></p>   
-        <br><a href="https://arcg.is/0iSaOD">Click here to send us feedback!</a>
+        <br><a href="https://arcg.is/0iSaOD" target='_blank'>Click here to send us feedback!</a>
         </div>
       </div>
     </div>
