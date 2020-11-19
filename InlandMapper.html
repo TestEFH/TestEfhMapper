@@ -192,8 +192,8 @@
             }],
         locationEnabled: true
       });
-      view.ui.add(searchWidget, "top-right");//Set the search to the top right
-    
+      view.ui.add(searchWidget, "top-left");//Set the search to the top right
+      view.ui.move("zoom", "top-left");
       //Addition of the button found on the query results window that pops up, used for downloading a CSV file
       var downloadReportAction = {
           title: "Download CSV",
