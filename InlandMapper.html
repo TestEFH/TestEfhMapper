@@ -447,7 +447,7 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                     }); //end of gulf ccap results query
                     SAtlanticLayer.queryFeatures(habitatQuery).then(function(result) {
                             result.features.forEach(function(feature){
-                              if(councilName = "the Gulf"){
+                              if(councilName == "the Gulf"){
                                 councilName = "both the Gulf and South Atlantic";
                                 contactInfo = "<a href='https://www.fisheries.noaa.gov/contact/rusty-swafford' target='_blank'>"
                               }
