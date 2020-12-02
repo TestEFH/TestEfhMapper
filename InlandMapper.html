@@ -435,7 +435,6 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
                       }
                       if(resultHabitats.length == 0){
                           resultHabitats.push(feature.attributes.grid_name);
-                          console.log("first " +resultHabitats[0]);
                       }//If resultHabitats is empty
                       for(i = 0; i < resultHabitats.length; i++){
                           if(resultHabitats[i] == feature.attributes.grid_name){
@@ -675,7 +674,7 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
         <p style ="text-align:center;">If you require an EFH consultation, depending on the location of your project, use the contact information found <a href="https://www.fisheries.noaa.gov/content/contact-habitat-conservation-division-southeast" target='_blank'>here</a> to connect with the appropriate EFH personnel.</p>
         <p style ="text-align:center;">For general EFH consultation information related to the Southeast Region, please contact <a href="https://www.fisheries.noaa.gov/contact-directory/regional-essential-fish-habitat-coordinators" target='_blank'>the Southeast Region Essential Fish Habitat Coordinator</a>.</p>
         <p style ="text-align:center;"><i>*This EFH web mapper is a tool to assist in the EFH consultation process and should not be used as the sole source to determine whether a NMFS EFH consultation should be conducted.</i></p>   
-        <br><a href="https://arcg.is/0iSaOD" target='_blank'>Click here to send us feedback!</a>
+        
         </div>
       </div>
     </div>
@@ -683,6 +682,8 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
     //Toggles showing the content of the instructional menu
     function dropDownFunction() {
       document.getElementById("aboutMenu").classList.toggle("show");
+      /*<br><a href="https://arcg.is/0iSaOD" target='_blank'>Click here to send us feedback!</a>*/
+      //Just holding this here.
     }
     </script>
   </div>
