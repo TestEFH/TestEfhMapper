@@ -20,7 +20,8 @@
       height: 40px;
       width: 100%;
       background-color: #00467F;
-      text-align: center;
+      background-image: linear-gradient(to right, #00000F , #00467F);
+      text-align: left;
     }
     #abtheader {
       padding-top: 5px;
@@ -653,10 +654,10 @@ reportText.push(feature.attributes.Species+","+feature.attributes.common_name+",
 </head>
 <body>
   <div id="header">
-    <a href = "https://www.fisheries.noaa.gov/"><img src = "https://www.fisheries.noaa.gov/themes/custom/noaa_components/images/noaa-50th-logo.png" style = "float: left; padding-left: 5px" width = "105" height = "37.8">
+    <a href = "https://www.fisheries.noaa.gov/"><img src = "https://www.fisheries.noaa.gov/themes/custom/noaa_components/images/noaa-50th-logo.png" style = "float: left; padding-left: 5px; position: relative;" width = "105" height = "37.8">
     </a>
-    <t style="color:white; font-family:'verdana'; font-size: 190%;" > 
-       Inland Essential Fishery Habitat Mapper 
+    <t style="color:white; font-family:'verdana'; font-size: 190%; padding-left: 10px;" > 
+       Inland EFH Mapper 
     </t>
     <div class="dropdown">
       <button onclick="dropDownFunction()" class="dropbtn">About</button>
